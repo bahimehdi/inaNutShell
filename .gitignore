@@ -1,0 +1,17 @@
+# Compiled object files
+*.o
+
+# Compiled shell binary (produced by `make`)
+/inaNutShell
+
+# Stale binaries left over from earlier builds
+myshell
+myshell.exe
+
+# Editor and OS noise
+*.swp
+*~
+.DS_Store
+
+# Stray scratch file with a corrupted name
+run_test.txt*

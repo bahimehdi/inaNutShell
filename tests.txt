@@ -1,0 +1,71 @@
+# Minishell Test Suite (aligned with cahierDeCharges.md)
+# Run these commands inside your running `./inaNutShell`
+
+# ==========================================
+# 1. Basic Execution (Stage 1)
+# ==========================================
+# Press Enter on an empty line (should just reprompt)
+
+ls
+pwd
+date
+echo "hello"
+ls -la
+
+# ==========================================
+# 2. Built-in Commands (Stage 2)
+# ==========================================
+cd /tmp
+pwd
+cd
+pwd
+cd /this_folder_does_not_exist
+
+# ==========================================
+# 3. Error Handling (Stage 1-3)
+# ==========================================
+unknown_command_xyz
+ls |
+ls >
+cat <
+ls & pwd
+
+# ==========================================
+# 4. I/O Redirections (Stage 3)
+# Note: Navigate back to the project folder first
+# ==========================================
+cd /mnt/c/Users/Mehdi/OneDrive/Desktop/prog/S8/SysAdmin/projet/inaNutShell
+echo "Hello from minishell" > test.txt
+cat < test.txt
+echo "Adding a second line" >> test.txt
+cat < test.txt
+
+# ==========================================
+# 5. Pipes (Stage 4)
+# ==========================================
+ls -la | grep .c
+cat Makefile | grep gcc | wc -l
+ls | grep .c > c_files.txt
+cat c_files.txt
+
+# ==========================================
+# 6. Background Execution (Stage 5)
+# ==========================================
+sleep 5 &
+ls
+
+# ==========================================
+# 7. Signals & Ctrl+C (Stage 6)
+# ==========================================
+# Type this, then press Ctrl+C while it's running (shell should not exit):
+sleep 10
+
+# Type this to exit:
+exit
+# Or press Ctrl+D on an empty prompt
+
+# ==========================================
+# 8. Memory Leak Test (Valgrind)
+# Note: Run this from the normal Ubuntu shell, NOT inside minishell
+# ==========================================
+valgrind --leak-check=full --track-fds=yes ./inaNutShell
