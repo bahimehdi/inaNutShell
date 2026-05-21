@@ -1,0 +1,98 @@
+# inaNutShell Remote Shell — Test Suite (Phase 2)
+# Manual tests for the client/server remote shell in this folder.
+
+# ==========================================
+# 0. Build
+# ==========================================
+cd ..            # build the base inaNutShell binary first
+make
+cd remote
+make             # builds 'server' and 'client'
+
+# ==========================================
+# 1. Start the server (Terminal 1)
+# ==========================================
+./server                       # port 4242, runs ../inaNutShell
+# Expected: "inaNutShell remote server: listening on port 4242"
+./server 5000                   # custom port
+./server 5000 ../inaNutShell    # explicit shell path
+
+# ==========================================
+# 2. Connect a client (Terminal 2)
+# ==========================================
+./client 127.0.0.1 4242
+# Expected (client): the "inaNutShell> " prompt, sent by the server.
+# Expected (server): "[+] client connected: 127.0.0.1:<port>"
+
+# ==========================================
+# 3. Basic commands over the network
+# ==========================================
+pwd
+echo hello from the remote shell
+whoami
+date
+ls -la
+
+# ==========================================
+# 4. Shell features still work over the socket
+# ==========================================
+cd /tmp                          # built-in
+pwd
+echo $HOME                       # environment variable expansion
+echo a ; echo b                  # multiple commands
+ls | grep txt                    # pipe
+echo saved > /tmp/remote_test.txt   # output redirection
+cat < /tmp/remote_test.txt          # input redirection
+history                          # bonus built-in
+
+# ==========================================
+# 5. Ending a session
+# ==========================================
+exit                             # or press Ctrl+D
+# Expected (client): "[connection closed by server]"
+# The server stays up and ready for new clients.
+
+# ==========================================
+# 6. Multi-client test (Terminal 2 AND Terminal 3)
+# ==========================================
+# Connect two clients at the same time:
+#   Terminal 2:  ./client 127.0.0.1 4242
+#   Terminal 3:  ./client 127.0.0.1 4242
+# In Terminal 2:  sleep 10
+# In Terminal 3:  echo this prints immediately
+# Expected: Terminal 3 is NOT blocked by Terminal 2's sleep.
+# Each client has its own shell process (own cwd, env, history):
+# in Terminal 2 'cd /tmp ; pwd' does NOT change Terminal 3's pwd.
+
+# ==========================================
+# 7. Server restart (SO_REUSEADDR)
+# ==========================================
+# Stop the server with Ctrl+C, then immediately start it again:
+./server
+# Expected: it rebinds at once, no "Address already in use".
+
+# ==========================================
+# 8. Error handling
+# ==========================================
+./client 127.0.0.1 9999          # no server on that port
+# Expected: "connect: Connection refused"
+./client 999.999.999.999 4242
+# Expected: "invalid IP address: 999.999.999.999"
+./client                         # missing arguments
+# Expected: "Usage: ./client <server_ip> <port>"
+
+# ==========================================
+# 9. Quick scripted test (single terminal)
+# ==========================================
+./server 4242 &
+sleep 1
+printf "pwd\necho scripted hello\nwhoami\nexit\n" | ./client 127.0.0.1 4242
+kill %1
+
+# ==========================================
+# 10. Known limits (Phase 2 — by design)
+# ==========================================
+# - The connection is a raw socket, not a terminal (PTY): line-based
+#   commands work, but full-screen programs (vim, top, TUI apps) will
+#   not render. A PTY is a later stretch goal.
+# - No authentication, no encryption: trusted LAN / localhost only.
