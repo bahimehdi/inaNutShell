@@ -1,6 +1,7 @@
 #include "executor.h"
 
 #include "builtins.h"
+#include "custom.h"
 
 #include <errno.h>
 #include <fcntl.h>
@@ -68,6 +69,8 @@ static void execute_child(Command *cmd)
     signal(SIGINT, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
     apply_redirections(cmd);
+    if (is_custom(cmd->argv[0]))
+        exit(exec_custom(cmd));
     execvp(cmd->argv[0], cmd->argv);
     unknown_command(cmd->argv[0]);
     exit(1);
@@ -82,6 +85,10 @@ static void exec_single(Command *cmd)
         return;
     if (is_builtin(cmd->argv[0])) {
         exec_builtin(cmd);
+        return;
+    }
+    if (is_custom(cmd->argv[0])) {
+        exec_custom(cmd);
         return;
     }
     pid = fork();

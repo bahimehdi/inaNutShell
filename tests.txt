@@ -65,7 +65,42 @@ exit
 # Or press Ctrl+D on an empty prompt
 
 # ==========================================
-# 8. Memory Leak Test (Valgrind)
+# 8. Custom Commands (bahi / mellaki)
+# Both namespaces share the same sub-commands.
+# Their folders live in $HOME/inaNutShell/{bahi,mellaki}
+# and are created automatically on first use.
+# ==========================================
+bahi help
+mellaki help
+
+bahi whoami
+mellaki whoami
+
+bahi pwd
+mellaki pwd
+
+bahi mkdir notes
+bahi mkdir drafts
+mellaki mkdir notes
+
+bahi ls
+mellaki ls
+bahi ls notes
+
+bahi cd
+pwd
+mellaki cd
+pwd
+
+# composes with pipes
+bahi ls | wc -l
+mellaki ls | grep notes
+
+# unknown sub-command (should print a friendly error, not crash)
+bahi nope
+
+# ==========================================
+# 9. Memory Leak Test (Valgrind)
 # Note: Run this from the normal Ubuntu shell, NOT inside minishell
 # ==========================================
 valgrind --leak-check=full --track-fds=yes ./inaNutShell

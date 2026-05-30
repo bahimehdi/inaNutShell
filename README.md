@@ -43,6 +43,9 @@ It does not compile with native Windows toolchains.
 - Re-execution of a past command with `!n`
 - Environment variable expansion, e.g. `echo $HOME`
 - Several commands on one line, separated by `;`
+- Custom author namespaces `bahi` and `mellaki`, each with sub-commands
+  `cd`, `pwd`, `ls [subdir]`, `mkdir <name>`, `whoami`, `help`. The folders
+  live in `$HOME/inaNutShell/{bahi,mellaki}` and are created on first use.
 
 ## Project Layout
 
@@ -52,6 +55,7 @@ It does not compile with native Windows toolchains.
 | `parser.c`   | Tokenizer: builds a `Pipeline` of `Command` structs   |
 | `executor.c` | Process creation, redirections, pipes                 |
 | `builtins.c` | Built-in commands and the command-history buffer      |
+| `custom.c`   | Author-namespaced commands (`bahi`, `mellaki`)        |
 | `signals.c`  | Signal handlers (`SIGINT`, `SIGCHLD`, `SIGQUIT`)      |
 | `utils.c`    | Helpers: prompt, line reading, string utilities       |
 

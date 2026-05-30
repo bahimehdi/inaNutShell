@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
-SRCS = main.c parser.c executor.c builtins.c signals.c utils.c
+SRCS = main.c parser.c executor.c builtins.c custom.c signals.c utils.c
 OBJS = $(SRCS:.c=.o)
 TARGET = inaNutShell
 
